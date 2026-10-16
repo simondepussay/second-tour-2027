@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Second Tour 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Patrick+Hand&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout : feuille de carnet graphite, réglages à gauche, trois tubes néon collants à droite */
+:root{
+  --paper:#16161b; --paper-2:#1f1f26; --graphite:#a9a9b6; --ink:#ecebf2; --faint:#3a3a46;
+  --cyan:#3df5ff; --pink:#ff4fd8; --amber:#ffc94d; --lime:#b6ff5c;
+  --f-display:"Caveat Brush","Comic Sans MS",cursive;
+  --f-body:"Patrick Hand","Segoe Print","Comic Sans MS",cursive;
+  --f-data:"Space Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.35;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(169,169,182,.07) 31px 32px);
+  padding-inline:16px;padding-block:20px 48px;
+}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.3rem,6vw,3.6rem);line-height:1;letter-spacing:.5px}
+h1 .n{color:var(--pink);}
+h2{font-size:1.7rem}
+.sub{color:var(--graphite);margin:6px 0 0;max-width:65ch}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+
+/* Boîtes au trait de crayon : bord tremblé via filtre SVG */
+.sk{position:relative;padding:16px 18px}
+.sk::before{content:"";position:absolute;inset:0;border:2px solid var(--graphite);border-radius:14px 10px 16px 9px;filter:url(#rough);pointer-events:none;opacity:.85}
+.sk.neon::before{border-color:var(--cyan);}
+
+/* Barre de participation */
+.top{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 26px;align-items:end}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font-size:1.05rem;color:var(--graphite)}
+.ctl label b{font-family:var(--f-data);color:var(--ink);font-weight:700}
+select,input[type=text],input[type=number]{font:inherit;color:var(--ink);background:var(--paper-2);border:1.5px dashed var(--graphite);border-radius:8px;padding:6px 10px;min-width:0}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;margin:4px 0 0;--c:var(--ink)}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:3px;background:linear-gradient(90deg,var(--c) var(--p,50%),var(--faint) var(--p,50%));}
+input[type=range]::-moz-range-track{height:4px;border-radius:3px;background:var(--faint)}
+input[type=range]::-moz-range-progress{height:4px;background:var(--c);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50% 45% 55% 48%;background:var(--paper);border:2.5px solid var(--c);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--paper);border:2.5px solid var(--c);cursor:grab}
+
+button{font:inherit;color:var(--ink);background:transparent;border:2px solid var(--graphite);border-radius:10px 7px 11px 8px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--lime);color:var(--lime);}
+.plus{font-family:var(--f-display);font-size:1.6rem;line-height:1;width:44px;height:44px;padding:0;border-color:var(--lime);color:var(--lime);border-radius:50% 46% 52% 48%;}
+
+.main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}.right{order:-1}}
+.col{display:flex;flex-direction:column;gap:22px;min-width:0}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hint{color:var(--graphite);font-size:.95rem}
+
+/* Liste des candidats */
+.cands{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.cand{display:grid;grid-template-columns:26px minmax(0,9.5rem) minmax(0,1fr) 4.4rem;gap:10px;align-items:center;padding:4px 6px;border-radius:8px}
+.cand.off{opacity:.38}
+.cand.q{background:linear-gradient(90deg,rgba(61,245,255,.08),transparent 70%)}
+.cand.q.b{background:linear-gradient(90deg,rgba(255,79,216,.09),transparent 70%)}
+.cand input[type=checkbox]{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:2px solid var(--graphite);border-radius:5px 3px 6px 4px;margin:0;cursor:pointer;display:grid;place-items:center}
+.cand input[type=checkbox]:checked{border-color:var(--lime)}
+.cand input[type=checkbox]:checked::after{content:"✓";font-family:var(--f-display);color:var(--lime);font-size:1.3rem;line-height:1;}
+.nm{display:flex;flex-direction:column;min-width:0}
+.nm span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{color:var(--graphite);font-size:.8rem;display:flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.pc{text-align:right;font-size:.95rem}
+.pc small{display:block;color:var(--graphite);font-size:.7rem}
+.badge{font-family:var(--f-display);font-size:.95rem;padding:0 6px;border-radius:6px;border:1.5px solid currentColor;margin-left:4px}
+.badge.a{color:var(--cyan);}
+.badge.b{color:var(--pink);}
+.del{border:0;padding:0 4px;color:var(--graphite);font-size:1rem}
+
+.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,9rem) 5rem auto;gap:8px;margin-top:12px;align-items:center}
+@media (max-width:520px){.add{grid-template-columns:1fr 1fr}.cand{grid-template-columns:24px minmax(0,7rem) minmax(0,1fr) 3.8rem;gap:7px}}
+
+/* Reports */
+.trs{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+.tr{display:flex;flex-direction:column;gap:4px}
+.tr .row1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.tr .row1 small{color:var(--graphite)}
+.stack{display:flex;height:14px;border-radius:4px;overflow:hidden;border:1px solid var(--faint)}
+.stack i{display:block;height:100%;transition:width .25s}
+.stack .sa{background:var(--cyan);}
+.stack .sb{background:var(--pink);}
+.stack .sl{flex:1;background:repeating-linear-gradient(135deg,transparent 0 4px,rgba(169,169,182,.35) 4px 5px)}
+.tr .sl2{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.tr .sl2 label{font-size:.85rem;color:var(--graphite);display:flex;justify-content:space-between;gap:6px}
+.tr .sl2 label b{font-family:var(--f-data);font-weight:400;color:var(--ink)}
+.edited{color:var(--amber);font-size:.8rem}
+
+/* Jauges */
+.right{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:860px){.right{position:static}}
+.gauges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.g{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;text-align:center}
+.g .big{font-family:var(--f-display);font-size:clamp(2rem,4.6vw,3rem);line-height:1}
+.g .who{font-size:1.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.g .vx{font-size:.75rem;color:var(--graphite)}
+.g svg{width:100%;max-width:120px;height:auto;overflow:visible}
+.g.a .big{color:var(--cyan);}
+.g.b .big{color:var(--pink);}
+.g.c .big{color:var(--amber);}
+.fill{transform-box:fill-box;transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+@media (prefers-reduced-motion:reduce){.fill,.stack i{transition:none}}
+.crown{font-family:var(--f-display);font-size:1.1rem;color:var(--lime);min-height:1.4em}
+.verdict{margin-top:12px;font-size:1.05rem;text-align:center}
+.implied{margin-top:10px;display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;color:var(--graphite);font-size:.95rem}
+.note{color:var(--graphite);font-size:.85rem;max-width:70ch}
+.note a{color:var(--cyan)}
+.empty{color:var(--graphite);padding:10px 0}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" scale="3.2"/>
+    </filter>
+    <filter id="glow" x="-50%" y="-20%" width="200%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#16161b" stroke-width="1.6" stroke-opacity=".45"/>
+    </pattern>
+    <clipPath id="tube"><rect x="18" y="14" width="84" height="292" rx="40"/></clipPath>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>Second tour <span class="n">2027</span></h1>
+    <p class="sub">Coche les candidats, règle leur score au premier tour et les reports de voix. Les deux premiers passent au second tour et les jauges bougent en direct.</p>
+  </header>
+
+  <section class="sk top" aria-label="Participation et sondage">
+    <div class="ctl">
+      <label for="poll">Sondage de départ</label>
+      <select id="poll"></select>
+    </div>
+    <div class="ctl">
+      <label for="p1">Participation 1<sup>er</sup> tour <b id="p1v"></b></label>
+      <input type="range" id="p1" min="40" max="95" step="0.5" value="72" style="--c:var(--lime)">
+    </div>
+    <div class="ctl">
+      <label for="p2">Participation 2<sup>nd</sup> tour <b id="p2v"></b></label>
+      <input type="range" id="p2" min="40" max="95" step="0.5" value="71" style="--c:var(--lime)">
+    </div>
+    <div class="ctl">
+      <label for="bl">Blancs et nuls au 2<sup>nd</sup> tour <b id="blv"></b></label>
+      <input type="range" id="bl" min="0" max="20" step="0.5" value="7" style="--c:var(--amber)">
+    </div>
+  </section>
+
+  <div class="main">
+    <div class="col">
+      <section class="sk">
+        <div class="head">
+          <h2>Premier tour</h2>
+          <span class="hint mono" id="tot"></span>
+        </div>
+        <div class="cands" id="cands"></div>
+        <form class="add" id="addf" autocomplete="off">
+          <input type="text" id="addName" placeholder="Nom du candidat" aria-label="Nom du candidat" required maxlength="40">
+          <select id="addFam" aria-label="Famille politique"></select>
+          <input type="number" id="addPct" min="0" max="60" step="0.5" value="3" aria-label="Score premier tour en %">
+          <button class="plus" type="submit" title="Ajouter le candidat" aria-label="Ajouter le candidat">+</button>
+        </form>
+      </section>
+
+      <section class="sk">
+        <div class="head">
+          <h2>Reports de voix</h2>
+          <button type="button" id="resetTr">Revenir aux estimations</button>
+        </div>
+        <p class="hint" style="margin:6px 0 0">Part des électeurs de chaque éliminé qui vote pour chaque finaliste. Le reste (hachuré) s'abstient ou vote blanc.</p>
+        <div class="trs" id="trs"></div>
+      </section>
+    </div>
+
+    <aside class="right col">
+      <section class="sk neon" aria-live="polite">
+        <h2>Second tour</h2>
+        <div class="gauges" id="gauges">
+          <div class="g a" id="gA"></div>
+          <div class="g b" id="gB"></div>
+          <div class="g c" id="gC"></div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+        <div class="implied">
+          <span id="impl"></span>
+          <button type="button" id="sync">Caler la participation sur les reports</button>
+        </div>
+      </section>
+      <p class="note">
+        Les deux finalistes sont en % des suffrages exprimés. La 3<sup>e</sup> jauge = abstention + blancs/nuls, en % des inscrits (environ 49,4 millions).
+        Scores 1<sup>er</sup> tour : sondages Ifop (12–14 oct. 2026), OpinionWay (13–14 oct.) et Harris Interactive (5–8 oct.), via
+        <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2027_French_presidential_election" target="_blank" rel="noopener">Wikipédia</a>.
+        Aucun institut ne publie de matrice de reports complète : les reports par défaut sont des estimations, calées pour retrouver les duels Harris (Le Pen 56 / Philippe 44, Le Pen 67 / Mélenchon 33) et la structure de reports d'Elabe. Tout est modifiable.
+      </p>
+    </aside>
+  </div>
+</div>
+
+<script>
+(() => {
+  const INSCRITS = 49.4e6;
+  const FAM = {
+    EXG:{label:"Extrême gauche",color:"#ff3b3b"},
+    LFI:{label:"Gauche radicale",color:"#ff7a3d"},
+    GAU:{label:"Gauche",color:"#ff5577"},
+    ECO:{label:"Écologiste",color:"#4dff88"},
+    PS:{label:"Centre gauche",color:"#ff7ad9"},
+    CEN:{label:"Centre",color:"#ffe14d"},
+    LR:{label:"Droite",color:"#4d9dff"},
+    EXD:{label:"Extrême droite",color:"#9b7bff"}
+  };
+  const ORDER = ["EXG","LFI","GAU","ECO","PS","CEN","LR","EXD"];
+  // Propension d'un électeur de la famille (ligne) à voter pour un candidat de la famille (colonne)
+  const AFF = {
+    EXG:[1,.7,.7,.5,.3,.05,.02,.12],
+    LFI:[.6,1,.9,.75,.4,.3,.1,.2],
+    GAU:[.6,.85,1,.8,.6,.35,.1,.2],
+    ECO:[.4,.65,.8,1,.8,.55,.1,.07],
+    PS:[.2,.4,.65,.8,1,.6,.2,.1],
+    CEN:[.02,.1,.2,.35,.55,1,.7,.35],
+    LR:[.01,.03,.05,.1,.25,.5,1,.65],
+    EXD:[.05,.1,.1,.03,.05,.1,.45,1]
+  };
+  const BASE = [
+    ["arthaud","Nathalie Arthaud","EXG"],["melenchon","Jean-Luc Mélenchon","LFI"],["roussel","Fabien Roussel","GAU"],
+    ["ruffin","François Ruffin","GAU"],["tondelier","Marine Tondelier","ECO"],["bouamrane","Karim Bouamrane","PS"],
+    ["glucksmann","Raphaël Glucksmann","PS"],["attal","Gabriel Attal","CEN"],["philippe","Édouard Philippe","CEN"],
+    ["villepin","Dominique de Villepin","CEN"],["lisnard","David Lisnard","LR"],["retailleau","Bruno Retailleau","LR"],
+    ["nda","Nicolas Dupont-Aignan","EXD"],["lepen","Marine Le Pen","EXD"],["zemmour","Éric Zemmour","EXD"]
+  ];
+  const POLLS = {
+    ifop:{label:"Ifop · 12–14 oct. 2026",d:{melenchon:16,roussel:2,ruffin:2,tondelier:2,glucksmann:11.5,attal:5,philippe:13,villepin:1.5,lisnard:6,retailleau:5,nda:1,lepen:32,zemmour:3}},
+    ow:{label:"OpinionWay · 13–14 oct. 2026",d:{arthaud:.5,melenchon:15,roussel:2,tondelier:1,bouamrane:.5,glucksmann:13,attal:5,philippe:12,lisnard:4,retailleau:6,nda:1,lepen:35,zemmour:5}},
+    harris:{label:"Harris Interactive · 5–8 oct. 2026",d:{arthaud:1,melenchon:18,roussel:2,tondelier:2,glucksmann:10,attal:5,philippe:13,retailleau:7,nda:2,lepen:35,zemmour:5}}
+  };
+
+  const S = {cands:BASE.map(([id,name,fam])=>({id,name,fam,pct:0,on:false,custom:false})), over:{}, p1:72, p2:71, bl:7};
+  let uid = 0;
+  const $ = id => document.getElementById(id);
+  const fmt = (n,d=1) => n.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+  const esc = s => s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const setP = el => el.style.setProperty("--p", ((el.value-el.min)/(el.max-el.min)*100)+"%");
+
+  function loadPoll(key){
+    const d = POLLS[key].d;
+    S.cands.forEach(c => { if(!c.custom){ c.pct = d[c.id]||0; c.on = c.id in d; } });
+    S.over = {};
+    renderCands(); update();
+  }
+
+  function defTr(src,A,B){
+    const a = AFF[src.fam][ORDER.indexOf(A.fam)], b = AFF[src.fam][ORDER.indexOf(B.fam)];
+    if(a+b===0) return {a:0,b:0};
+    const part = (a+b-a*b)*.95;
+    return {a:Math.round(part*a/(a+b)*100), b:Math.round(part*b/(a+b)*100)};
+  }
+  const key = (s,A,B) => s.id+"|"+A.id+"|"+B.id;
+  const getTr = (s,A,B) => S.over[key(s,A,B)] || defTr(s,A,B);
+
+  function finalists(){
+    const on = S.cands.filter(c=>c.on && c.pct>0);
+    const sorted = [...on].sort((x,y)=>y.pct-x.pct);
+    return {on, A:sorted[0], B:sorted[1], total:on.reduce((s,c)=>s+c.pct,0)};
+  }
+
+  /* ---------- Premier tour ---------- */
+  function renderCands(){
+    const famOpts = ORDER.map(f=>`<option value="${f}">${FAM[f].label}</option>`).join("");
+    if(!$("addFam").options.length) $("addFam").innerHTML = famOpts;
+    $("cands").innerHTML = S.cands.map(c=>`
+      <div class="cand${c.on?"":" off"}" data-id="${c.id}">
+        <input type="checkbox" id="on_${c.id}" ${c.on?"checked":""} aria-label="Inclure ${esc(c.name)}">
+        <label class="nm" for="on_${c.id}"><span>${esc(c.name)}</span><small><i class="dot" style="background:${FAM[c.fam].color};}"></i>${FAM[c.fam].label}${c.custom?` <button type="button" class="del" data-del="${c.id}" aria-label="Retirer ${esc(c.name)}">✕</button>`:""}</small></label>
+        <input type="range" id="pct_${c.id}" min="0" max="50" step="0.5" value="${c.pct}" style="--c:${FAM[c.fam].color}" aria-label="Score de ${esc(c.name)}">
+        <div class="pc mono"><span id="pv_${c.id}"></span><small id="pn_${c.id}"></small></div>
+      </div>`).join("");
+    S.cands.forEach(c=>setP($("pct_"+c.id)));
+  }
+
+  $("cands").addEventListener("input", e=>{
+    const t = e.target, row = t.closest(".cand"); if(!row) return;
+    const c = S.cands.find(x=>x.id===row.dataset.id);
+    if(t.type==="range"){ c.pct = +t.value; setP(t); if(c.pct>0 && !c.on){ c.on = true; row.classList.remove("off"); row.querySelector("input[type=checkbox]").checked = true; } }
+    update();
+  });
+  $("cands").addEventListener("change", e=>{
+    const t = e.target; if(t.type!=="checkbox") return;
+    const c = S.cands.find(x=>x.id===t.closest(".cand").dataset.id);
+    c.on = t.checked; if(c.on && c.pct===0){ c.pct = 2; $("pct_"+c.id).value = 2; setP($("pct_"+c.id)); }
+    t.closest(".cand").classList.toggle("off",!c.on);
+    update();
+  });
+  $("cands").addEventListener("click", e=>{
+    const id = e.target.dataset && e.target.dataset.del; if(!id) return;
+    e.preventDefault();
+    S.cands = S.cands.filter(c=>c.id!==id); renderCands(); update();
+  });
+  $("addf").addEventListener("submit", e=>{
+    e.preventDefault();
+    const name = $("addName").value.trim(); if(!name) return;
+    const pct = Math.max(0,Math.min(50,+$("addPct").value||0));
+    S.cands.push({id:"x"+(++uid),name,fam:$("addFam").value,pct,on:pct>0,custom:true});
+    $("addName").value = "";
+    renderCands(); update();
+  });
+
+  /* ---------- Reports ---------- */
+  let trSig = "";
+  function renderTr(F){
+    const elim = F.A && F.B ? F.on.filter(c=>c!==F.A && c!==F.B) : [];
+    const sig = F.A&&F.B ? F.A.id+F.B.id+elim.map(c=>c.id).join() : "none";
+    if(sig!==trSig){
+      trSig = sig;
+      if(!F.A || !F.B){ $("trs").innerHTML = `<p class="empty">Coche au moins deux candidats avec un score.</p>`; return; }
+      if(!elim.length){ $("trs").innerHTML = `<p class="empty">Aucun éliminé : il n'y a que deux candidats.</p>`; return; }
+      $("trs").innerHTML = elim.map(c=>`
+        <div class="tr" data-id="${c.id}">
+          <div class="row1"><span>${esc(c.name)} <small class="mono" id="tw_${c.id}"></small></span><span class="edited" id="te_${c.id}"></span></div>
+          <div class="stack"><i class="sa" id="ta_${c.id}"></i><i class="sb" id="tb_${c.id}"></i><i class="sl"></i></div>
+          <div class="sl2">
+            <div><label for="ra_${c.id}">→ ${esc(F.A.name.split(" ").slice(-1)[0])} <b id="la_${c.id}"></b></label><input type="range" id="ra_${c.id}" min="0" max="100" step="1" style="--c:var(--cyan)"></div>
+            <div><label for="rb_${c.id}">→ ${esc(F.B.name.split(" ").slice(-1)[0])} <b id="lb_${c.id}"></b></label><input type="range" id="rb_${c.id}" min="0" max="100" step="1" style="--c:var(--pink)"></div>
+          </div>
+        </div>`).join("");
+    }
+    elim.forEach(c=>{
+      const t = getTr(c,F.A,F.B);
+      const ra = $("ra_"+c.id), rb = $("rb_"+c.id);
+      if(document.activeElement!==ra) ra.value = t.a;
+      if(document.activeElement!==rb) rb.value = t.b;
+      setP(ra); setP(rb);
+      $("la_"+c.id).textContent = t.a+" %"; $("lb_"+c.id).textContent = t.b+" %";
+      $("ta_"+c.id).style.width = t.a+"%"; $("tb_"+c.id).style.width = t.b+"%";
+      $("tw_"+c.id).textContent = "· "+fmt(c.pct/F.total*100)+" %";
+      $("te_"+c.id).textContent = S.over[key(c,F.A,F.B)] ? "modifié" : "";
+    });
+  }
+  $("trs").addEventListener("input", e=>{
+    const t = e.target; if(t.type!=="range") return;
+    const F = finalists(); const c = S.cands.find(x=>x.id===t.closest(".tr").dataset.id);
+    const k = key(c,F.A,F.B), cur = {...getTr(c,F.A,F.B)};
+    const v = +t.value;
+    if(t.id.startsWith("ra_")){ cur.a = v; if(cur.a+cur.b>100) cur.b = 100-cur.a; $("rb_"+c.id).value = cur.b; }
+    else { cur.b = v; if(cur.a+cur.b>100) cur.a = 100-cur.b; $("ra_"+c.id).value = cur.a; }
+    S.over[k] = cur; update();
+  });
+  $("resetTr").addEventListener("click", ()=>{ S.over = {}; update(); });
+
+  /* ---------- Jauges ---------- */
+  function tube(pct,color,mark){
+    const h = 292*Math.max(0,Math.min(100,pct))/100;
+    return `<svg viewBox="0 0 120 320" role="img" aria-label="${fmt(pct)} %">
+      <g clip-path="url(#tube)">
+        <rect x="18" y="14" width="84" height="292" fill="#1f1f26"/>
+        <g class="fill" style="transform:scaleY(${pct/100})">
+          <rect x="18" y="14" width="84" height="292" fill="${color}" opacity=".88"/>
+          <rect x="18" y="14" width="84" height="292" fill="url(#hatch)"/>
+          <rect x="18" y="14" width="84" height="6" fill="#fff" opacity=".55"/>
+        </g>
+      </g>
+      ${mark?`<line x1="8" x2="112" y1="160" y2="160" stroke="#ecebf2" stroke-width="1.5" stroke-dasharray="5 5" opacity=".7"/><text x="114" y="164" fill="#a9a9b6" font-size="11" font-family="Space Mono, monospace">50</text>`:""}
+      <g filter="url(#rough)" fill="none" stroke-linecap="round">
+        <rect x="18" y="14" width="84" height="292" rx="40" stroke="${color}" stroke-width="3"/>
+        <rect x="16" y="12" width="87" height="295" rx="42" stroke="#ecebf2" stroke-width="1.2" opacity=".5"/>
+        <path d="M30 60 Q28 140 31 250" stroke="#ecebf2" stroke-width="3" opacity=".25"/>
+      </g>
+    </svg>`;
+  }
+  function gaugeHTML(el,{big,who,vx,color,pct,mark,crown}){
+    if(!el.firstElementChild){
+      el.innerHTML = `<div class="crown"></div><div class="big mono"></div><div class="tube"></div><div class="who"></div><div class="vx mono"></div>`;
+      el.querySelector(".tube").innerHTML = tube(0,color,mark);
+    }
+    el.querySelector(".crown").textContent = crown||"";
+    el.querySelector(".big").textContent = big;
+    el.querySelector(".who").textContent = who;
+    el.querySelector(".vx").textContent = vx;
+    const svg = el.querySelector("svg");
+    svg.querySelector(".fill").style.transform = `scaleY(${Math.max(0,Math.min(100,pct))/100})`;
+    svg.setAttribute("aria-label", who+" : "+big);
+  }
+
+  function update(){
+    ["p1","p2","bl"].forEach(id=>{ S[id] = +$(id).value; $(id+"v").textContent = fmt(S[id])+" %"; setP($(id)); });
+    const F = finalists();
+    $("tot").textContent = `total saisi ${fmt(F.total)} % · ramené à 100 %`;
+    S.cands.forEach(c=>{
+      $("pv_"+c.id).textContent = fmt(c.pct)+" %";
+      $("pn_"+c.id).innerHTML = c.on && F.total ? fmt(c.pct/F.total*100)+" %"+(c===F.A?'<span class="badge a">1</span>':c===F.B?'<span class="badge b">2</span>':"") : "–";
+      const row = $("pct_"+c.id).closest(".cand");
+      row.classList.toggle("q", c===F.A||c===F.B); row.classList.toggle("b", c===F.B);
+    });
+    renderTr(F);
+    if(!F.A || !F.B){
+      gaugeHTML($("gA"),{big:"–",who:"Finaliste 1",vx:"",color:"#3df5ff",pct:0,mark:true});
+      gaugeHTML($("gB"),{big:"–",who:"Finaliste 2",vx:"",color:"#ff4fd8",pct:0,mark:true});
+      gaugeHTML($("gC"),{big:"–",who:"Abst. + blancs",vx:"",color:"#ffc94d",pct:0});
+      $("verdict").textContent = ""; $("impl").textContent = ""; return;
+    }
+    const E1 = INSCRITS*S.p1/100*0.98;
+    let a=0,b=0;
+    F.on.forEach(c=>{
+      const v = E1*c.pct/F.total;
+      if(c===F.A) a += v*.97; else if(c===F.B) b += v*.97;
+      else { const t = getTr(c,F.A,F.B); a += v*t.a/100; b += v*t.b/100; }
+    });
+    const rA = a/(a+b)*100, rB = 100-rA;
+    const expr2 = INSCRITS*S.p2/100*(1-S.bl/100);
+    const lost = 100-expr2/INSCRITS*100;
+    const impliedP2 = (a+b)/(1-S.bl/100)/INSCRITS*100;
+    const winA = rA>=rB;
+    gaugeHTML($("gA"),{big:fmt(rA)+"%",who:F.A.name,vx:`≈ ${fmt(expr2*rA/100/1e6)} M voix`,color:"#3df5ff",pct:rA,mark:true,crown:winA?"★ en tête":""});
+    gaugeHTML($("gB"),{big:fmt(rB)+"%",who:F.B.name,vx:`≈ ${fmt(expr2*rB/100/1e6)} M voix`,color:"#ff4fd8",pct:rB,mark:true,crown:winA?"":"★ en tête"});
+    gaugeHTML($("gC"),{big:fmt(lost)+"%",who:"Abst. + blancs",vx:`≈ ${fmt(INSCRITS*lost/100/1e6)} M inscrits`,color:"#ffc94d",pct:lost});
+    const gap = Math.abs(rA-rB), w = winA?F.A:F.B;
+    $("verdict").textContent = gap<1 ? "Au coude-à-coude : moins d'un point d'écart." : `${w.name} l'emporte de ${fmt(gap)} points, soit environ ${fmt(expr2*gap/100/1e6)} million${expr2*gap/100/1e6>=2?"s":""} de voix.`;
+    $("impl").textContent = `Les reports donnent ~${fmt(impliedP2)} % de participation.`;
+    $("sync").onclick = ()=>{ $("p2").value = Math.max(40,Math.min(95,Math.round(impliedP2*2)/2)); update(); };
+  }
+
+  ["p1","p2","bl"].forEach(id=>$(id).addEventListener("input",update));
+  $("poll").innerHTML = Object.entries(POLLS).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join("");
+  $("poll").addEventListener("change", e=>loadPoll(e.target.value));
+  loadPoll("ifop");
+})();
+</script>
+</body>
+</html>
